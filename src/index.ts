@@ -257,4 +257,15 @@ function showNotFoundResult() {
     listElement.textContent = "Keine Ergebnisse gefunden."; //Todo -> auch wenn liste leer
     listElement.onclick = () => {};
 }
+
+function loadLastSearchedContent(): void {
+    var storedData = localStorage.getItem("lastSearchedCity");
+    if (storedData) {
+      try {
+        var data: GeolocationResult = JSON.parse(storedData);
+        searchInput.value = stringifyGeolocation(data);
+        onCitySelected(data);
+      } catch (e) {}
+    }
+  }
   
