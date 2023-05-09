@@ -1,14 +1,14 @@
 //THIS IS THE ENTRY FILE - WRITE YOUR MAIN LOGIC HERE!
 const storageTimeOutInMinutes: number = 10;
 
-
+//Geocoding API
 const geocodingUrl: string = "https://geocoding-api.open-meteo.com/v1/search";
 const countOfCitySuggestions: number = 10;
 const languageFormat: string = "de";
 
 const lastSearchedCityStorageKey ='lastSearchedCity';
 
-
+//HTML Elemente
 const searchInput = document.querySelector("#searchInput") as HTMLInputElement;
 const suggestionsListElement = document.querySelector(
   ".searchListItem"
@@ -24,8 +24,8 @@ interface WeatherData {
 }
 
 interface WeatherStorageData {
-weatherData: WeatherData;
-timeStamp: number;
+    weatherData: WeatherData;
+    timeStamp: number;
 }
 
 interface GeolocationResult {
@@ -57,6 +57,10 @@ async function getGeolocationFromApi(city: string): Promise<string | null> {
 //stores the api responses into an array of geolocations
 function getGeolocationResults(jsonData: any): GeolocationResult[] {
     let results: GeolocationResult[] = new Array();
+    if (
+        jsonData &&
+        jsonData.results[Symbol.iterator] === 'function'
+    )
   
     for (let elem of jsonData.results) {
       results.push({
