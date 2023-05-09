@@ -58,24 +58,24 @@ async function getGeolocationFromApi(city: string): Promise<string | null> {
 function getGeolocationResults(jsonData: any): GeolocationResult[] {
     let results: GeolocationResult[] = new Array();
     if (
-        jsonData &&
-        jsonData.results[Symbol.iterator] === 'function'
+      jsonData &&
+      jsonData.results &&
+      typeof jsonData.results[Symbol.iterator] === 'function'
     )
-  
-    for (let elem of jsonData.results) {
-      results.push({
-        district: elem.admin1,
-        countryCode: elem.country_code,
-        latitude: elem.latitude,
-        longitude: elem.longitude,
-        name: elem.name,
-        timeZone: elem.timeZone,
-        countryId: elem.id,
-        region: elem.admin2,
-      });
-    }
+      for (let elem of jsonData.results) {
+        results.push({
+          district: elem.admin1,
+          countryCode: elem.country_code,
+          latitude: elem.latitude,
+          longitude: elem.longitude,
+          name: elem.name,
+          timeZone: elem.timeZone,
+          countryId: elem.id,
+          region: elem.admin2,
+        });
+      }
     return results;
-  }
+}
 
   async function getWeatherDataFromApi(
     city: GeolocationResult
@@ -194,10 +194,10 @@ async function onCitySelected(result: GeolocationResult): Promise<void> {
   
 async function getGeolocationResultsFromInput(
     typedValue: string
-    ): Promise<GeolocationResult[] | null> {
+ ): Promise<GeolocationResult[] | null> {
     const result = await getGeolocationFromApi(typedValue);
     if (result) {
-    return getGeolocationResults(result);
+        return getGeolocationResults(result);
     }
     return null;
 }
