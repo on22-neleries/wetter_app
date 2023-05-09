@@ -37,3 +37,18 @@ interface GeolocationResult {
     countryId: number;
     region: string;
 }
+
+//ruft die API auf und sucht nach passenden Ergebnissen zu der Eingabe im Suchfeld
+async function getGeolocationFromApi(city: string): Promise<string | null> {
+    let response = await fetch(
+      `${geocodingUrl}?name=${city}&count=${countOfCitySuggestions}&language=${languageFormat}&format=json`
+    );
+    if (response.status === 200) {
+      return response.json();
+    } else {
+      console.log(
+        "An error occured during api call. Response: " + response.status
+      );
+      return null;
+    }
+  }
