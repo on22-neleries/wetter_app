@@ -20,4 +20,9 @@ interface WeatherData {
     humidity: string;
     windspeed: string;
     weatherIcon: string;
-  }
+}
+
+interface WeatherStorageData {
+weatherData: WeatherData;
+timeStamp: number;
+}
