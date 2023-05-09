@@ -180,5 +180,20 @@ async function getWeatherDataAndStore(
         return null;
       }
     }
+}
+
+async function onCitySelected(result: GeolocationResult): Promise<void> {
+    const weatherData = await getWeatherDataAndStore(result);
+    updateWeatherUI(weatherData);
   }
+  
+  async function getGeolocationResultsFromInput(
+    typedValue: string
+  ): Promise<GeolocationResult[] | null> {
+    const result = await getGeolocationFromApi(typedValue);
+    if (result) {
+      return getGeolocationResults(result);
+    }
+    return null;
+}
   
