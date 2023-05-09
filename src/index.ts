@@ -273,5 +273,12 @@ function addEventListeners(): void {
     searchInput.addEventListener("input", searchInputListener);
     searchInput.onclick = () => (searchInput.value = "");
     //clear input, wenn unfocusing the searchbar
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", addEventListeners);
+  } else {
+    addEventListeners();
+    loadLastSearchedContent();
   }
   
