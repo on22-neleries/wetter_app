@@ -13,3 +13,11 @@ const listElement = document.querySelector(
   ".searchListItem"
 ) as HTMLButtonElement;
 const listParent = document.querySelector(".searchListGroup") as HTMLElement;
+
+interface WeatherData {
+    geolocation: GeolocationResult;
+    temp: string;
+    humidity: string;
+    windspeed: string;
+    weatherIcon: string;
+  }
