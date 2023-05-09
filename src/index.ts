@@ -249,7 +249,16 @@ async function fillCitySuggestionList(): Promise<void> {
       suggestionsListContainer.style.display = 'none';
       onCitySelected(value);
     };
-  }
+}
+
+function cleanUpChildren(parentNode: HTMLElement, except: HTMLElement) {
+    for (let i = parentNode.childElementCount - 1; i >= 0; i--) {
+      const child = parentNode.children[i] as HTMLElement;
+      if (child !== except) {
+        parentNode.removeChild(parentNode.lastElementChild as HTMLElement);
+      }
+    }
+}
 
 function showNotFoundResult() {
     if (listParent.childElementCount > 1) {
