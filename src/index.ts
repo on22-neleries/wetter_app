@@ -267,5 +267,11 @@ function loadLastSearchedContent(): void {
         onCitySelected(data);
       } catch (e) {}
     }
+}
+
+function addEventListeners(): void {
+    searchInput.addEventListener("input", searchInputListener);
+    searchInput.onclick = () => (searchInput.value = "");
+    //clear input, wenn unfocusing the searchbar
   }
   
