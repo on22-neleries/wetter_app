@@ -51,4 +51,23 @@ async function getGeolocationFromApi(city: string): Promise<string | null> {
       );
       return null;
     }
+}
+
+//stores the api responses into an array of geolocations
+function getGeolocationResults(jsonData: any): GeolocationResult[] {
+    let results: GeolocationResult[] = new Array();
+  
+    for (let elem of jsonData.results) {
+      results.push({
+        district: elem.admin1,
+        countryCode: elem.country_code,
+        latitude: elem.latitude,
+        longitude: elem.longitude,
+        name: elem.name,
+        timeZone: elem.timeZone,
+        countryId: elem.id,
+        region: elem.admin2,
+      });
+    }
+    return results;
   }
