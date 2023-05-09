@@ -71,3 +71,33 @@ function getGeolocationResults(jsonData: any): GeolocationResult[] {
     }
     return results;
   }
+
+  async function getWeatherDataFromApi(
+    city: GeolocationResult
+  ): Promise<WeatherData | null> {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${city.latitude}&longitude=${city.latitude}&hourly=temperature_2m,relativehumidity_2m,windspeed_10m,weathercode`;
+  
+    let response = await fetch(url);
+  
+    if (response.status === 200) {
+      const data = await response.json();
+  
+      var currentHour = new Date().getHours();
+      //find the current hour
+      const index = data.hourly.time.findIndex((item: string) => {
+        const date = new Date(item);
+        return date.getHours() === currentHour;
+      });
+  
+      const weatherData: WeatherData = {
+        geolocation: city,
+        temp: Math.round(data.hourly.temperature_2m[index]) + "°C",
+        humidity: data.hourly.relativehumidity_2m[index] + "%",
+        windspeed: data.hourly.windspeed_10m[index] + " km/h",
+        weatherIcon: getWeatherIcon(data.hourly.weathercode[index]),
+      };
+      return weatherData;
+    } else {
+      return null;
+    }
+  }
