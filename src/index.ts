@@ -143,3 +143,42 @@ function updateWeatherUI(weatherData: WeatherData | null): void {
       return "Bilder/schneebedeckt.png";
     else return "";
 }
+
+//prüft ob Daten von der API geholt werden oder schon gespeicherte Daten verwendet werden können
+async function getWeatherDataAndStore(
+    geolocation: GeolocationResult
+  ): Promise<WeatherData | null> {
+    localStorage.setItem("lastSearchedCity", JSON.stringify(geolocation));
+  
+    const storedData = localStorage.getItem(geolocation.countryId.toString());
+    let weatherStorageData: WeatherStorageData = storedData
+      ? JSON.parse(storedData)
+      : null;
+  
+    const storedDataValid: boolean =
+      weatherStorageData &&
+      new Date().getTime() - weatherStorageData.timeStamp <
+        storageTimeOutInMinutes * 60000;
+  
+    if (storedDataValid) {
+      console.log("getting data from storage"); //remove later
+      return weatherStorageData.weatherData;
+    } else {
+      const weatherData = await getWeatherDataFromApi(geolocation);
+      if (weatherData) {
+        console.log("adding data to storage"); //remove later
+        const weatherStorageData: WeatherStorageData = {
+          timeStamp: new Date().getTime(),
+          weatherData: weatherData,
+        };
+        localStorage.setItem(
+          geolocation.countryId.toString(),
+          JSON.stringify(weatherStorageData)
+        );
+        return weatherData;
+      } else {
+        return null;
+      }
+    }
+  }
+  
