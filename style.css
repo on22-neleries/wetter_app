@@ -40,6 +40,21 @@ body{
     font-size: 18px;
 }
 
+.searchListGroup{
+    position: absolute;
+    display: none;
+}
+
+button{
+    width: 100%;
+}
+
+.searchListItem{
+    position: relative;
+    width: 100%;
+    z-index: 99;
+}
+
 .search button{
     border: 0;
     outline: 0;
@@ -67,6 +82,12 @@ body{
 
 .weather h2{
     font-size: 45px;
+    font-weight: 400;
+    margin-top: -10px;
+}
+
+.weather h3{
+    font-size: 30px;
     font-weight: 400;
     margin-top: -10px;
 }
