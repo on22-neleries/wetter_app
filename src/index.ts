@@ -246,5 +246,15 @@ async function searchInputListener(): Promise<void> {
       }catch(e){
         showNotFoundResult();
       }
-  }
+}
+
+function showNotFoundResult() {
+    if (listParent.childElementCount > 1) {
+      for (let i = 0; i < listParent.childElementCount - 1; i++) {
+        listParent.removeChild(listParent.lastElementChild as HTMLElement);
+      }
+    }
+    listElement.textContent = "Keine Ergebnisse gefunden."; //Todo -> auch wenn liste leer
+    listElement.onclick = () => {};
+}
   
