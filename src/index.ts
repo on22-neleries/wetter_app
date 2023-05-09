@@ -283,15 +283,18 @@ function loadLastSearchedContent(): void {
 }
 
 function addEventListeners(): void {
-    searchInput.addEventListener("input", searchInputListener);
-    searchInput.onclick = () => (searchInput.value = "");
-    //clear input, wenn unfocusing the searchbar
+    searchInput.addEventListener("input", fillCitySuggestionList);
+    searchInput.onclick = () => (searchInput.value = '');
+    document.addEventListener('click', (event) =>{
+        if(suggestionsListContainer !== event.target)
+        suggestionsListContainer.style.display = 'none';
+    })
 }
 
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", addEventListeners);
-  } else {
-    addEventListeners();
-    loadLastSearchedContent();
-  }
+} else {
+addEventListeners();
+loadLastSearchedContent();
+}
   
