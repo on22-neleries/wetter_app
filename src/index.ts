@@ -196,4 +196,55 @@ async function onCitySelected(result: GeolocationResult): Promise<void> {
     }
     return null;
 }
+
+async function searchInputListener(): Promise<void> {
+    const city = searchInput.value;
+    listParent.style.display = "block";
+  
+    try{
+  
+    const geolocationResults = await getGeolocationResultsFromInput(city);
+    const filteredGeolocationResults = geolocationResults?.filter((x) =>
+          x.name.toLocaleLowerCase().startsWith(city.toLocaleLowerCase())
+        );
+      if (filteredGeolocationResults && filteredGeolocationResults.length > 0) {
+        
+        let index: number = 0;
+        const childNodeCount: number = listParent.childElementCount;
+  
+        for (let element of filteredGeolocationResults) {
+          const node: HTMLButtonElement =
+            index === 0
+              ? listElement
+              : index < childNodeCount
+              ? (listParent.children[index] as HTMLButtonElement)
+              : (listElement.cloneNode(true) as HTMLButtonElement);
+  
+          node.textContent = stringifyGeolocation(element);
+  
+          node.onclick = () => {
+            searchInput.value = node.textContent as string;
+            listParent.style.display = "none";
+  
+            onCitySelected(element);
+          };
+  
+          if (index >= childNodeCount) listParent.appendChild(node);
+          index++;
+        }
+  
+        
+          if (childNodeCount > index) {
+            for (let i = index; i < childNodeCount; i++) {
+              listParent.removeChild(listParent.lastElementChild as HTMLElement);
+            }
+          }
+        }
+        else{
+          showNotFoundResult();
+        }
+      }catch(e){
+        showNotFoundResult();
+      }
+  }
   
