@@ -276,7 +276,9 @@ function loadLastSearchedContent(): void {
         var data: GeolocationResult = JSON.parse(storedData);
         searchInput.value = stringifyGeolocation(data);
         onCitySelected(data);
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+      }
     }
 }
 
