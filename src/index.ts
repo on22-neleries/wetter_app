@@ -100,4 +100,46 @@ function getGeolocationResults(jsonData: any): GeolocationResult[] {
     } else {
       return null;
     }
+}
+
+
+function updateWeatherUI(weatherData: WeatherData | null): void {
+    (document.querySelector(".weather") as HTMLElement).style.display =
+      weatherData ? "block" : "none";
+    (document.querySelector(".error") as HTMLElement).style.display = weatherData
+      ? "none"
+      : "block";
+  
+    if (weatherData) {
+      (document.querySelector(".city") as HTMLElement).innerHTML =
+        weatherData.geolocation.name;
+      (document.querySelector(".district") as HTMLElement).innerHTML =
+        weatherData.geolocation.district;
+  
+      (document.querySelector(".temp") as HTMLElement).innerHTML =
+        weatherData.temp;
+      (document.querySelector(".feuchtigkeit") as HTMLElement).innerHTML =
+        weatherData.humidity;
+      (document.querySelector(".windgeschwindigkeit") as HTMLElement).innerHTML =
+        weatherData.windspeed;
+      (document.querySelector(".weather-icon") as HTMLImageElement).src =
+        weatherData.weatherIcon;
+    }
   }
+  
+  function between(x: number, min: number, max: number): boolean {
+    return x >= min && x <= max;
+  }
+  
+  function getWeatherIcon(weatherCode: number): string {
+    if (weatherCode === 0) return "Bilder/sonne.png";
+    else if (between(weatherCode, 1, 3)) return "Bilder/wolke.png";
+    else if (between(weatherCode, 45, 48)) return "Bilder/wolkig.png";
+    else if (between(weatherCode, 51, 57)) return "Bilder/wolkig.png";
+    else if (between(weatherCode, 61, 67) || between(weatherCode, 80, 82))
+      return "Bilder/regnerisch.png";
+    else if (between(weatherCode, 95, 99)) return "Bilder/sturm.png";
+    else if (between(weatherCode, 71, 77) || between(weatherCode, 85, 86))
+      return "Bilder/schneebedeckt.png";
+    else return "";
+}
