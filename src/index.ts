@@ -103,6 +103,7 @@ function getGeolocationResults(jsonData: any): GeolocationResult[] {
       };
       return weatherData;
     } else {
+        console.log(response);
       return null;
     }
 }
