@@ -26,3 +26,14 @@ interface WeatherStorageData {
 weatherData: WeatherData;
 timeStamp: number;
 }
+
+interface GeolocationResult {
+    district: string;
+    countryCode: string;
+    latitude: string;
+    longitude: string;
+    name: string;
+    timeZone: string;
+    countryId: number;
+    region: string;
+}
