@@ -266,6 +266,9 @@ function showNotFoundResult() {
     suggestionsListElement.onclick = () => {};
 }
 
+function stringifyGeolocation(location: GeolocationResult): string{
+    return `${location.countryCode} ${location.name} Landkreis: ${location.district} Region: ${location.region}`;
+}
 function loadLastSearchedContent(): void {
     var storedData = localStorage.getItem("lastSearchedCity");
     if (storedData) {
