@@ -7,12 +7,13 @@ const countOfCitySuggestions: number = 10;
 const languageFormat: string = "de";
 
 const lastSearchedCityStorageKey ='lastSearchedCity';
-const searchInput = document.querySelector("#searchInput") as HTMLInputElement;
 
-const listElement = document.querySelector(
+
+const searchInput = document.querySelector("#searchInput") as HTMLInputElement;
+const suggestionsListElement = document.querySelector(
   ".searchListItem"
 ) as HTMLButtonElement;
-const listParent = document.querySelector(".searchListGroup") as HTMLElement;
+const suggestionsListContainer = document.querySelector(".searchListGroup") as HTMLElement;
 
 interface WeatherData {
     geolocation: GeolocationResult;
