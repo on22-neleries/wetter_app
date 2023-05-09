@@ -261,13 +261,9 @@ function cleanUpChildren(parentNode: HTMLElement, except: HTMLElement) {
 }
 
 function showNotFoundResult() {
-    if (listParent.childElementCount > 1) {
-      for (let i = 0; i < listParent.childElementCount - 1; i++) {
-        listParent.removeChild(listParent.lastElementChild as HTMLElement);
-      }
-    }
-    listElement.textContent = "Keine Ergebnisse gefunden."; //Todo -> auch wenn liste leer
-    listElement.onclick = () => {};
+    cleanUpChildren(suggestionsListContainer, suggestionsListElement);
+    suggestionsListElement.textContent = 'Keine Ergebnisse gefunden.';
+    suggestionsListElement.onclick = () => {};
 }
 
 function loadLastSearchedContent(): void {
