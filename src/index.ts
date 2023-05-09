@@ -149,7 +149,6 @@ function updateWeatherUI(weatherData: WeatherData | null): void {
 async function getWeatherDataAndStore(
     geolocation: GeolocationResult
   ): Promise<WeatherData | null> {
-    localStorage.setItem("lastSearchedCity", JSON.stringify(geolocation));
   
     const storedData = localStorage.getItem(geolocation.countryId.toString());
     let weatherStorageData: WeatherStorageData = storedData
@@ -162,16 +161,16 @@ async function getWeatherDataAndStore(
         storageTimeOutInMinutes * 60000;
   
     if (storedDataValid) {
-      console.log("getting data from storage"); //remove later
+    localStorage.setItem(lastSearchedCityStorageKey, JSON.stringify(geolocation));
       return weatherStorageData.weatherData;
     } else {
       const weatherData = await getWeatherDataFromApi(geolocation);
       if (weatherData) {
-        console.log("adding data to storage"); //remove later
         const weatherStorageData: WeatherStorageData = {
           timeStamp: new Date().getTime(),
           weatherData: weatherData,
         };
+        localStorage.setItem(lastSearchedCityStorageKey, JSON.stringify(geolocation));
         localStorage.setItem(
           geolocation.countryId.toString(),
           JSON.stringify(weatherStorageData)
@@ -186,68 +185,71 @@ async function getWeatherDataAndStore(
 async function onCitySelected(result: GeolocationResult): Promise<void> {
     const weatherData = await getWeatherDataAndStore(result);
     updateWeatherUI(weatherData);
-  }
+}
   
-  async function getGeolocationResultsFromInput(
+async function getGeolocationResultsFromInput(
     typedValue: string
-  ): Promise<GeolocationResult[] | null> {
+    ): Promise<GeolocationResult[] | null> {
     const result = await getGeolocationFromApi(typedValue);
     if (result) {
-      return getGeolocationResults(result);
+    return getGeolocationResults(result);
     }
     return null;
 }
 
-async function searchInputListener(): Promise<void> {
+async function fillCitySuggestionList(): Promise<void> {
     const city = searchInput.value;
-    listParent.style.display = "block";
-  
-    try{
+    suggestionsListContainer.style.display = 'block';
   
     const geolocationResults = await getGeolocationResultsFromInput(city);
+    //filter the results so that the selection matches our creteria
     const filteredGeolocationResults = geolocationResults?.filter((x) =>
-          x.name.toLocaleLowerCase().startsWith(city.toLocaleLowerCase())
-        );
-      if (filteredGeolocationResults && filteredGeolocationResults.length > 0) {
-        
-        let index: number = 0;
-        const childNodeCount: number = listParent.childElementCount;
+      x.name.toLocaleLowerCase().startsWith(city.toLocaleLowerCase())
+    );
+    if (filteredGeolocationResults && filteredGeolocationResults.length > 0) {
+      let index: number = 0;
+      const childElementCount: number = suggestionsListContainer.childElementCount;
   
-        for (let element of filteredGeolocationResults) {
-          const node: HTMLButtonElement =
-            index === 0
-              ? listElement
-              : index < childNodeCount
-              ? (listParent.children[index] as HTMLButtonElement)
-              : (listElement.cloneNode(true) as HTMLButtonElement);
+      for (let element of filteredGeolocationResults) {
+        const node: HTMLButtonElement =
+          index === 0
+          //remain the first element and reuse it
+            ? suggestionsListElement
+            //if there is an existing child, reuse it for performance issues
+            : index < childElementCount ? suggestionsListContainer.children[index] as HTMLButtonElement
+            //if there are no more children existing, create a new
+            : (suggestionsListElement.cloneNode(true) as HTMLButtonElement);
   
-          node.textContent = stringifyGeolocation(element);
+        node.textContent = stringifyGeolocation(element);
   
-          node.onclick = () => {
-            searchInput.value = node.textContent as string;
-            listParent.style.display = "none";
+        setListItemClickEvent(node, element);
   
-            onCitySelected(element);
-          };
-  
-          if (index >= childNodeCount) listParent.appendChild(node);
-          index++;
+        if (index > 0) {
+          suggestionsListContainer.appendChild(node);
         }
-  
-        
-          if (childNodeCount > index) {
-            for (let i = index; i < childNodeCount; i++) {
-              listParent.removeChild(listParent.lastElementChild as HTMLElement);
-            }
-          }
-        }
-        else{
-          showNotFoundResult();
-        }
-      }catch(e){
-        showNotFoundResult();
+        index++;
       }
-}
+  
+      //sometimes there where more cildren before this search. Remove the unused elements
+      for(let i = childElementCount -1; i>=index; i--){
+        suggestionsListContainer.removeChild(suggestionsListContainer.lastElementChild as HTMLButtonElement);
+      }
+  
+    } else {
+      showNotFoundResult();
+    }
+  }
+  
+  function setListItemClickEvent(
+    button: HTMLButtonElement,
+    value: GeolocationResult
+  ) {
+    button.onclick = () => {
+      searchInput.value = button.textContent as string;
+      suggestionsListContainer.style.display = 'none';
+      onCitySelected(value);
+    };
+  }
 
 function showNotFoundResult() {
     if (listParent.childElementCount > 1) {
