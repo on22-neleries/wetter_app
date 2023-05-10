@@ -1,4 +1,5 @@
 //THIS IS THE ENTRY FILE - WRITE YOUR MAIN LOGIC HERE!
+//legt fest wie lange die gespeicherten Daten aus localStorage wieder aufgerufen werden
 const storageTimeOutInMinutes: number = 10;
 
 //Geocoding API
@@ -39,7 +40,7 @@ interface GeolocationResult {
     region: string;
 }
 
-//ruft die API auf und sucht nach passenden Ergebnissen zu der Eingabe im Suchfeld
+//ruft die API auf und sucht nach passenden Ergebnissen zu der Eingabe im Suchfeld über Längen- und Breitengrad
 async function getGeolocationFromApi(city: string): Promise<string | null> {
     let response = await fetch(
       `${geocodingUrl}?name=${city}&count=${countOfCitySuggestions}&language=${languageFormat}&format=json`
@@ -54,7 +55,7 @@ async function getGeolocationFromApi(city: string): Promise<string | null> {
     }
 }
 
-//stores the api responses into an array of geolocations
+//erstellt ein Array von einem json objekt
 function getGeolocationResults(jsonData: any): GeolocationResult[] {
     let results: GeolocationResult[] = new Array();
     if (
@@ -88,7 +89,6 @@ function getGeolocationResults(jsonData: any): GeolocationResult[] {
       const data = await response.json();
   
       var currentHour = new Date().getHours();
-      //find the current hour
       const index = data.hourly.time.findIndex((item: string) => {
         const date = new Date(item);
         return date.getHours() === currentHour;
@@ -160,7 +160,6 @@ async function getWeatherDataAndStore(
     let weatherStorageData: WeatherStorageData = storedData
       ? JSON.parse(storedData)
       : null;
-  
     const storedDataValid: boolean =
       weatherStorageData &&
       new Date().getTime() - weatherStorageData.timeStamp <
@@ -188,11 +187,12 @@ async function getWeatherDataAndStore(
     }
 }
 
+//Nutzer sucht Stadt aus Liste aus, die Wetter Daten werden abgerufen und das ui angepasst
 async function onCitySelected(result: GeolocationResult): Promise<void> {
     const weatherData = await getWeatherDataAndStore(result);
     updateWeatherUI(weatherData);
 }
-  
+//sucht passende Städte zur Eingabe 
 async function getGeolocationResultsFromInput(
     typedValue: string
  ): Promise<GeolocationResult[] | null> {
@@ -202,13 +202,13 @@ async function getGeolocationResultsFromInput(
     }
     return null;
 }
-
+//generiert die Liste mit vorgeschlagenen Städten
 async function fillCitySuggestionList(): Promise<void> {
     const city = searchInput.value;
     suggestionsListContainer.style.display = 'block';
   
     const geolocationResults = await getGeolocationResultsFromInput(city);
-    //filter the results so that the selection matches our creteria
+    //filtert die Resultate
     const filteredGeolocationResults = geolocationResults?.filter((x) =>
       x.name.toLocaleLowerCase().startsWith(city.toLocaleLowerCase())
     );
@@ -219,11 +219,9 @@ async function fillCitySuggestionList(): Promise<void> {
       for (let element of filteredGeolocationResults) {
         const node: HTMLButtonElement =
           index === 0
-          //remain the first element and reuse it
+         
             ? suggestionsListElement
-            //if there is an existing child, reuse it for performance issues
             : index < childElementCount ? suggestionsListContainer.children[index] as HTMLButtonElement
-            //if there are no more children existing, create a new
             : (suggestionsListElement.cloneNode(true) as HTMLButtonElement);
   
         node.textContent = stringifyGeolocation(element);
@@ -236,7 +234,7 @@ async function fillCitySuggestionList(): Promise<void> {
         index++;
       }
   
-      //sometimes there where more cildren before this search. Remove the unused elements
+      //manchmal sind mehrere "children" vor der Suche da -> löscht die ungenutzten Elemente
       for(let i = childElementCount -1; i>=index; i--){
         suggestionsListContainer.removeChild(suggestionsListContainer.lastElementChild as HTMLButtonElement);
       }
@@ -257,6 +255,7 @@ async function fillCitySuggestionList(): Promise<void> {
     };
 }
 
+//löscht die "children" von einer node, nur kein definiertes Element
 function cleanUpChildren(parentNode: HTMLElement, except: HTMLElement) {
     for (let i = parentNode.childElementCount - 1; i >= 0; i--) {
       const child = parentNode.children[i] as HTMLElement;
