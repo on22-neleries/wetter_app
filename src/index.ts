@@ -2,18 +2,18 @@
 const storageTimeOutInMinutes: number = 10;
 
 //Geocoding API
-const geocodingUrl: string = "https://geocoding-api.open-meteo.com/v1/search";
+const geocodingUrl: string = 'https://geocoding-api.open-meteo.com/v1/search';
 const countOfCitySuggestions: number = 10;
-const languageFormat: string = "de";
+const languageFormat: string = 'de';
 
-const lastSearchedCityStorageKey ='lastSearchedCity';
+const lastSearchedCityStorageKey = 'lastSearchedCity';
 
 //HTML Elemente
-const searchInput = document.querySelector("#searchInput") as HTMLInputElement;
+const searchInput = document.querySelector('#searchInput') as HTMLInputElement;
 const suggestionsListElement = document.querySelector(
-  ".searchListItem"
+  '.searchListItem'
 ) as HTMLButtonElement;
-const suggestionsListContainer = document.querySelector(".searchListGroup") as HTMLElement;
+const suggestionsListContainer = document.querySelector('.searchListGroup') as HTMLElement;
 
 interface WeatherData {
     geolocation: GeolocationResult;
@@ -140,10 +140,11 @@ function updateWeatherUI(weatherData: WeatherData | null): void {
   function getWeatherIcon(weatherCode: number): string {
     if (weatherCode === 0) return "Bilder/sonne.png";
     else if (between(weatherCode, 1, 3)) return "Bilder/wolke.png";
-    else if (between(weatherCode, 45, 48)) return "Bilder/wolkig.png";
-    else if (between(weatherCode, 51, 57)) return "Bilder/wolkig.png";
-    else if (between(weatherCode, 61, 67) || between(weatherCode, 80, 82))
-      return "Bilder/regnerisch.png";
+    else if (between(weatherCode, 45, 48)) return "Bilder/nebelig.png";
+    else if (between(weatherCode, 51, 57)) return "Bilder/nieselregen.png";
+    else if (between(weatherCode, 61, 65)) return "Bilder/regnerisch.png";
+    else if (between(weatherCode, 66, 67)) return "Bilder/schneeregen.png";
+    else if (between(weatherCode, 80, 82)) return "Bilder/regen.png";
     else if (between(weatherCode, 95, 99)) return "Bilder/sturm.png";
     else if (between(weatherCode, 71, 77) || between(weatherCode, 85, 86))
       return "Bilder/schneebedeckt.png";
